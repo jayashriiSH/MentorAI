@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body{
+    font-family: Inter, sans-serif;
+    background: #f8fafc;
+}
+
+.pdf-highlight {
+    background: rgba(250, 204, 21, 0.55);
+    border-radius: 2px;
+}
