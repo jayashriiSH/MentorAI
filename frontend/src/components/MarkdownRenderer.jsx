@@ -61,7 +61,12 @@ function parseInline(text, key) {
 const SECTION_LINE = /^([\p{Emoji_Presentation}\p{Extended_Pictographic}]?\s*)\*\*(.+?)\*\*\s*(.*)$/u;
 
 export default function MarkdownRenderer({ content }) {
-    const segments = content.split(/```(\w*)\n?([\s\S]*?)```/g);
+
+    if (content == null) {
+        return null;
+    }
+
+    const segments = String(content).split(/```(\w*)\n?([\s\S]*?)```/g);
     const nodes = [];
 
     for (let i = 0; i < segments.length; i += 3) {

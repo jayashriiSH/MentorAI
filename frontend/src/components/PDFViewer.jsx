@@ -6,9 +6,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-const DOCS_BASE_URL = import.meta.env.VITE_API_BASE_URL
-    ? `${import.meta.env.VITE_API_BASE_URL}/documents`
-    : "/documents";
+const DOCS_BASE_URL = "http://127.0.0.1:8000/documents";
 
 export default function PdfViewer({ filename, pageNumber = 1, highlightText, onPageChange }) {
     const [numPages, setNumPages] = useState(null);

@@ -5,7 +5,7 @@ import { askQuestion } from "../services/api";
 import MarkdownRenderer from "../components/MarkdownRenderer";
 import SourceList from "../components/SourceList";
 import PdfViewer from "../components/PdfViewer";
-import { Send, Bot, User, Plus, Trash2 } from "lucide-react";
+import { Send, Bot, User, Plus, Trash2, FileText, GraduationCap } from "lucide-react";
 import {
     createSession,
     getSessions,
@@ -16,6 +16,7 @@ import {
 } from "../services/chatService";
 import { learningAction } from "../services/api";
 import LearningToolbox from "../components/LearningToolbox";
+import LearningWorkspace from "../components/LearningWorkspace";
 
 function Chat() {
     const [params] = useSearchParams();
@@ -33,6 +34,8 @@ function Chat() {
         highlight: null,
     });
     const [learningContent, setLearningContent] = useState(null);
+    const [activeRightTab, setActiveRightTab] = useState("workspace");
+    const [toolboxLoading, setToolboxLoading] = useState(false);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -102,10 +105,9 @@ function Chat() {
         setPdfState({
             filename: source.source,
             page: source.page || 1,
-            // If your backend returns the retrieved chunk text as
-            // source.snippet/source.text, pass it here to highlight it.
             highlight: source.snippet || source.text || null,
         });
+        setActiveRightTab("pdf");
     }
 
     async function sendQuestion() {
@@ -252,13 +254,20 @@ function Chat() {
                                                         <LearningToolbox
                                                             actions={message.toolbox}
                                                             onClick={async (action) => {
-                                                                const result = await learningAction(
-                                                                    action.type,
-                                                                    message.question,
-                                                                    message.text
-                                                                );
-
-                                                                setLearningContent(result);
+                                                                setToolboxLoading(true);
+                                                                setActiveRightTab("workspace");
+                                                                try {
+                                                                    const result = await learningAction(
+                                                                        action.type,
+                                                                        message.question,
+                                                                        message.text
+                                                                    );
+                                                                    setLearningContent(result);
+                                                                } catch (err) {
+                                                                    console.error(err);
+                                                                } finally {
+                                                                    setToolboxLoading(false);
+                                                                }
                                                             }}
                                                         />
                                                     </>
@@ -282,16 +291,6 @@ function Chat() {
                             <div ref={bottomRef} />
                         </div>
 
-                        {learningContent && (
-                            <div className="border-t border-gray-200 bg-gray-50 p-4">
-                                <h2 className="font-bold mb-2">Learning Tool</h2>
-
-                                <pre className="text-xs overflow-auto whitespace-pre-wrap">
-                                    {JSON.stringify(learningContent, null, 2)}
-                                </pre>
-                            </div>
-                        )}
-
                         <div className="border-t border-gray-100 p-4 flex gap-3 bg-white shrink-0">
                             <input
                                 className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
@@ -313,14 +312,54 @@ function Chat() {
                         </div>
                     </div>
 
-                    {/* PDF panel */}
-                    <div className="min-h-0">
-                        <PdfViewer
-                            filename={pdfState.filename}
-                            pageNumber={pdfState.page}
-                            highlightText={pdfState.highlight}
-                            onPageChange={(p) => setPdfState((s) => ({ ...s, page: p }))}
-                        />
+                    {/* Right Panel: Workspace | PDF Viewer */}
+                    <div className="flex flex-col min-h-0 bg-white border-l border-gray-200">
+                        {/* Tab Headers */}
+                        <div className="flex border-b border-gray-200 shrink-0 bg-gray-50/50">
+                            <button
+                                onClick={() => setActiveRightTab("workspace")}
+                                className={`flex-1 py-3 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition ${
+                                    activeRightTab === "workspace"
+                                        ? "border-blue-600 text-blue-600 bg-white"
+                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"
+                                }`}
+                            >
+                                <GraduationCap size={15} />
+                                Learning Workspace
+                            </button>
+                            <button
+                                onClick={() => setActiveRightTab("pdf")}
+                                className={`flex-1 py-3 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition ${
+                                    activeRightTab === "pdf"
+                                        ? "border-blue-600 text-blue-600 bg-white"
+                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"
+                                }`}
+                            >
+                                <FileText size={14} />
+                                Document Preview
+                            </button>
+                        </div>
+
+                        {/* Tab Content */}
+                        <div className="flex-1 min-h-0 overflow-y-auto">
+                            {activeRightTab === "workspace" ? (
+                                toolboxLoading ? (
+                                    <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm gap-2">
+                                        <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent" />
+                                        <span>Generating learning tool content...</span>
+                                    </div>
+                                ) : (
+                                    <LearningWorkspace content={learningContent} />
+                                )
+                            ) : (
+                                <PdfViewer
+                                    filename={pdfState.filename}
+                                    pageNumber={pdfState.page}
+                                    highlightText={pdfState.highlight}
+                                    onPageChange={(p) => setPdfState((s) => ({ ...s, page: p }))}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

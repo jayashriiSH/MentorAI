@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 
 
-def retrieve_context(query: str, k: int = 5):
+def retrieve_context(query: str, k: int = 3):
 
     vector_db = Chroma(
         persist_directory=CHROMA_PATH,

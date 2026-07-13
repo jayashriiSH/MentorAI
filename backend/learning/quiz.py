@@ -1,59 +1,30 @@
-from groq import Groq
-from config import GROQ_API_KEY
+from learning.base import generate_learning_content
 
-client = Groq(api_key=GROQ_API_KEY)
+def generate_quiz(question: str, answer: str):
+    """
+    Generates a 5-question multiple choice quiz based on the conversation context.
+    """
+    prompt = f"""You are creating a quiz for a student.
 
-
-def generate_quiz(question, answer):
-
-    prompt = f"""
-You are creating a quiz for a student.
-
-Question:
+Question/Topic discussed:
 {question}
 
-Explanation:
+Explanation/Context:
 {answer}
 
-Create exactly 5 multiple-choice questions.
-
+Create exactly 5 multiple-choice questions testing their understanding.
 Return ONLY valid JSON.
+No markdown code fences.
 
-Example:
-
+Example structure:
 {{
-    "quiz":[
-        {{
-            "question":"...",
-            "options":[
-                "A",
-                "B",
-                "C",
-                "D"
-            ],
-            "answer":"B"
-        }}
-    ]
+  "quiz": [
+    {{
+      "question": "What is ...?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Option B"
+    }}
+  ]
 }}
 """
-
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.3,
-    )
-
-    import json
-
-    text = response.choices[0].message.content
-
-    text = text.replace("```json", "")
-    text = text.replace("```", "")
-    text = text.strip()
-
-    return json.loads(text)
+    return generate_learning_content(prompt, key_name="quiz")

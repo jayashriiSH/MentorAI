@@ -4,6 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from routes.chat import router as chat_router
 from routes.upload import router as upload_router
 from routes.learning import router as learning_router
+from routes.memory import router as memory_router
+from routes.learning_path import router as learning_path_router
+
 app = FastAPI(
     title="AI Teaching Assistant",
     version="1.0"
@@ -24,6 +27,9 @@ app.add_middleware(
 app.include_router(upload_router)
 app.include_router(chat_router)
 app.include_router(learning_router)
+app.include_router(memory_router)
+app.include_router(learning_path_router)
+
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -39,9 +45,11 @@ app.mount(
     StaticFiles(directory=UPLOAD_DIR),
     name="documents",
 )
-
+print("Exists:", os.path.exists(UPLOAD_DIR))
+print("Files:", os.listdir(UPLOAD_DIR))
 @app.get("/")
 def home():
     return {
         "message": "AI Teaching Assistant Backend Running 🚀"
     }
+
