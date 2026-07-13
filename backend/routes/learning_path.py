@@ -80,3 +80,38 @@ def fetch_learning_path(document_id: str, user_id: str):
         "document_id": document_id,
         "path": path,
     }
+
+
+class UpdateProgressRequest(BaseModel):
+    user_id: str
+    document_id: str
+    roadmap: dict
+    current_topic: str
+    next_topic: str
+    completed: bool
+
+
+@router.post("/learning-path/update-progress")
+def update_progress(request: UpdateProgressRequest):
+    """
+    Update topic-level progress in the roadmap JSON and advance active topic status.
+    """
+    from services.learning_path_service import update_learning_progress
+    
+    result = update_learning_progress(
+        user_id=request.user_id,
+        document_id=request.document_id,
+        current_topic=request.current_topic,
+        next_topic=request.next_topic,
+        roadmap=request.roadmap,
+        completed=request.completed
+    )
+    
+    if not result:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to update progress."
+        )
+        
+    return {"success": True, "path": result}
+

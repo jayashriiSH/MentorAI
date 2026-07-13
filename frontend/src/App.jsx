@@ -4,8 +4,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import Documents from "./pages/Documents";
-import Analytics from "./pages/Analytics";
-import Memory from "./pages/Memory";
+import Learning from "./pages/Learning";
 import Profile from "./pages/Profile";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -13,7 +12,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <Routes>
-
       <Route path="/" element={<Login />} />
 
       <Route
@@ -44,19 +42,10 @@ function App() {
       />
 
       <Route
-        path="/analytics"
+        path="/learning"
         element={
           <ProtectedRoute>
-            <Analytics />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/memory"
-        element={
-          <ProtectedRoute>
-            <Memory />
+            <Learning />
           </ProtectedRoute>
         }
       />
@@ -69,7 +58,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
     </Routes>
   );
 }

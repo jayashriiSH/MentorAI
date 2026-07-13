@@ -1,8 +1,10 @@
 import { useState } from "react";
 
-export default function ExerciseViewer({ data }) {
-    console.log(data);
-    const exercise = data?.exercise || {};
+export default function ExerciseViewer({ data, onComplete }) {
+    const exercise =
+    data?.data?.exercise ??
+    data?.exercise ??
+    {};
     const [userCode, setUserCode] = useState(exercise.starter_code || "");
     const [showHints, setShowHints] = useState({});
     const [revealSolution, setRevealSolution] = useState(false);
@@ -106,8 +108,16 @@ export default function ExerciseViewer({ data }) {
                 </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-gray-100 text-center text-xs text-gray-400 font-medium">
-                💪 Try to solve the puzzle yourself before peeking at the solution!
+            <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col gap-3">
+                <button
+                    onClick={onComplete}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl py-3 font-semibold text-sm transition shadow-sm flex items-center justify-center gap-2"
+                >
+                    Complete Challenge
+                </button>
+                <div className="text-center text-xs text-gray-400 font-medium">
+                    💪 Try to solve the puzzle yourself before peeking at the solution!
+                </div>
             </div>
         </div>
     );

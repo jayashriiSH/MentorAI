@@ -135,4 +135,68 @@ export async function updateLearningPath(userId, completed, currentTopic, nextTo
         throw new Error("Failed to update learning path");
     }
     return response.json();
-}
+}
+
+export async function getLearningPathForDoc(userId, documentId) {
+    const response = await fetch(`${API_URL}/learning-path/${documentId}?user_id=${userId}`);
+    if (!response.ok) {
+        throw new Error("Failed to fetch learning path for document");
+    }
+    return response.json();
+}
+
+export async function generateLearningPathForDoc(userId, documentId) {
+    const response = await fetch(`${API_URL}/learning-path/generate`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            document_id: documentId,
+        }),
+    });
+    if (!response.ok) {
+        throw new Error("Failed to generate learning path for document");
+    }
+    return response.json();
+}
+
+export async function updateTopicProgress(userId, documentId, roadmap, currentTopic, nextTopic, completed) {
+    const response = await fetch(`${API_URL}/learning-path/update-progress`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            document_id: documentId,
+            roadmap,
+            current_topic: currentTopic,
+            next_topic: nextTopic,
+            completed,
+        }),
+    });
+    if (!response.ok) {
+        throw new Error("Failed to update topic progress");
+    }
+    return response.json();
+}
+
+export async function generateLesson(topic, documentId) {
+    const response = await fetch(`${API_URL}/learning/lesson`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            topic,
+            document_id: documentId,
+        }),
+    });
+    if (!response.ok) {
+        throw new Error("Failed to generate lesson content");
+    }
+    return response.json();
+}
+

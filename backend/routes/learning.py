@@ -56,4 +56,39 @@ def get_analogy(request: LearningRequest):
 @router.post("/examples")
 def get_examples(request: LearningRequest):
     res = generate_examples(request.question, request.answer)
-    return {"type": "examples", "data": res}
+    return {"type": "examples", "data": res}
+
+
+class LessonRequest(BaseModel):
+    topic: str
+    document_id: str
+
+
+from services.retriever import retrieve_document_context
+from services.supabase_service import supabase
+from learning.lesson import generate_lesson
+
+@router.post("/lesson")
+def get_lesson(request: LessonRequest):
+    try:
+        # Fetch document filename
+        doc_res = supabase.table("documents").select("filename").eq("id", request.document_id).single().execute()
+        if not doc_res.data:
+            return {"success": False, "message": "Document not found."}
+        
+        filename = doc_res.data["filename"]
+        
+        # Retrieve context from vector db
+        docs = retrieve_document_context(request.topic, filename, k=4)
+        context = "\n\n".join([doc.page_content for doc in docs])
+        
+        if not context.strip():
+            # If no context found, fall back to first page
+            context = f"Topic: {request.topic}. Study guide for {filename}."
+
+        res = generate_lesson(request.topic, context)
+        return res
+    except Exception as e:
+        print("Error generating lesson:", e)
+        return {"success": False, "message": str(e)}
+

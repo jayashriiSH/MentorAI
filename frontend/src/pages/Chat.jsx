@@ -21,8 +21,16 @@ import LearningWorkspace from "../components/LearningWorkspace";
 function Chat() {
     const [params] = useSearchParams();
     const selectedDocument = params.get("document");
+    const promptParam = params.get("prompt");
 
     const [question, setQuestion] = useState("");
+    
+    useEffect(() => {
+        if (promptParam) {
+            setQuestion(promptParam);
+        }
+    }, [promptParam]);
+
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState([]);
     const bottomRef = useRef(null);

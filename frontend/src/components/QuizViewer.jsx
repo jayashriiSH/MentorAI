@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-export default function QuizViewer({ data }) {
+export default function QuizViewer({ data, onComplete }) {
 
-    console.log("QUIZ DATA");
-    console.log(data);
-
-    const questions = data?.quiz || [];
+    const questions =
+    data?.data?.quiz ??
+    data?.quiz ??
+    [];
     const [currentIdx, setCurrentIdx] = useState(0);
     const [selectedOpt, setSelectedOpt] = useState(null);
     const [isAnswerChecked, setIsAnswerChecked] = useState(false);
@@ -42,6 +42,9 @@ export default function QuizViewer({ data }) {
             setCurrentIdx((idx) => idx + 1);
         } else {
             setShowResults(true);
+            if (onComplete) {
+                onComplete();
+            }
         }
     }
 
@@ -55,6 +58,7 @@ export default function QuizViewer({ data }) {
 
     if (showResults) {
         return (
+
             <div className="p-6 flex flex-col items-center justify-center h-full text-center">
                 <div className="text-5xl mb-4">🏆</div>
                 <h3 className="text-xl font-bold text-gray-800">Quiz Completed!</h3>

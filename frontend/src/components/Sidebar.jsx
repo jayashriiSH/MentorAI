@@ -1,7 +1,7 @@
+import React from "react";
 import { NavLink } from "react-router-dom";
 
-function Sidebar() {
-
+export default function Sidebar() {
   const menu = [
     {
       name: "Dashboard",
@@ -16,12 +16,8 @@ function Sidebar() {
       path: "/chat",
     },
     {
-      name: "Analytics",
-      path: "/analytics",
-    },
-    {
-      name: "Memory",
-      path: "/memory",
+      name: "Learning",
+      path: "/learning",
     },
     {
       name: "Profile",
@@ -30,34 +26,27 @@ function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-slate-900 text-white h-screen">
-
-      <div className="p-6 text-2xl font-bold">
-
+    <div className="w-64 bg-slate-900 text-white h-screen shrink-0 flex flex-col">
+      <div className="p-6 text-2xl font-bold border-b border-slate-800">
         MentorAI
-
       </div>
-
-      {menu.map((item) => (
-
-        <NavLink
-          key={item.path}
-          to={item.path}
-          className={({ isActive }) =>
-            `block px-6 py-4 hover:bg-slate-700 ${
-              isActive ? "bg-blue-600" : ""
-            }`
-          }
-        >
-
-          {item.name}
-
-        </NavLink>
-
-      ))}
-
+      <nav className="flex-1 py-6 space-y-1">
+        {menu.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) =>
+              `block px-6 py-3.5 text-sm font-semibold hover:bg-slate-800/60 transition ${
+                isActive
+                  ? "bg-blue-600 hover:bg-blue-700 text-white"
+                  : "text-slate-300"
+              }`
+            }
+          >
+            {item.name}
+          </NavLink>
+        ))}
+      </nav>
     </div>
   );
 }
-
-export default Sidebar;
